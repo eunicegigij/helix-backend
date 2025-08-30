@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Your Email - HELIX</title>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Barlow', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #0557FF 0%, #0440CC 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #FFF;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(5, 87, 255, 0.2);
+            overflow: hidden;
+            animation: slideIn 0.8s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0557FF, #0440CC);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+            font-weight: 700;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+            font-weight: 400;
+        }
+        
+        .content {
+            padding: 40px 30px;
+            text-align: center;
+            background: #FFF;
+        }
+        
+        .welcome-text {
+            font-size: 1.3em;
+            color: #555;
+            margin-bottom: 30px;
+            line-height: 1.8;
+            font-weight: 400;
+        }
+        
+        .token-section {
+            background: #f8f9fa;
+            border: 2px solid #0557FF;
+            padding: 25px;
+            margin: 30px 0;
+            border-radius: 15px;
+        }
+        
+        .token-section h3 {
+            color: #0557FF;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+        
+        .token-display {
+            background: #FFF;
+            border: 2px dashed #0557FF;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.2em;
+            color: #0557FF;
+            font-weight: 600;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .token-display:hover {
+            background: #f0f8ff;
+        }
+        
+        .copy-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .copy-btn:hover {
+            background: #5a6268;
+            transform: translateY(-1px);
+        }
+        
+        .verification-form {
+            margin-top: 30px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .form-title {
+            color: #0557FF;
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        
+        .token-input {
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1.1em;
+            width: 100%;
+            max-width: 300px;
+            margin: 10px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 1px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .token-input:focus {
+            outline: none;
+            border-color: #0557FF;
+            box-shadow: 0 0 10px rgba(5, 87, 255, 0.2);
+        }
+        
+        .verify-token-btn {
+            background: linear-gradient(135deg, #0557FF, #0440CC);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1em;
+            margin: 15px 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(5, 87, 255, 0.3);
+        }
+        
+        .verify-token-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(5, 87, 255, 0.4);
+        }
+        
+        .result-message {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 500;
+            display: none;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .footer {
+            background: #f8f9fa;
+            padding: 30px;
+            text-align: center;
+            border-top: 1px solid #eee;
+        }
+        
+        .footer p {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            font-weight: 400;
+        }
+        
+        .company-name {
+            color: #0557FF;
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+        
+        .icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #0557FF, #0440CC);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            animation: pulse 2s infinite;
+            box-shadow: 0 8px 20px rgba(5, 87, 255, 0.3);
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .logo-text {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: white;
+            letter-spacing: 2px;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+            
+            .header {
+                padding: 30px 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .content {
+                padding: 30px 20px;
+            }
+            
+            .token-input {
+                max-width: 250px;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="icon">
+                <span class="logo-text">H</span>
+            </div>
+            <h1>Welcome to HELIX!</h1>
+            <p>You're almost ready to get started</p>
+        </div>
+        
+        <div class="content">
+            <p class="welcome-text">
+                Thank you for signing up for HELIX! To complete your registration and secure your account, 
+                please verify your email address using the verification token below.
+            </p>
+            
+            <div class="token-section">
+                <h3>📧 Your Verification Token</h3>
+                <p style="margin-bottom: 15px; color: #666; font-weight: 400;">Copy this token and paste it in the verification field below:</p>
+                <div class="token-display" id="tokenDisplay" onclick="copyToken()">
+                    {{VERIFICATION_TOKEN}}
+                </div>
+                <button class="copy-btn" onclick="copyToken()">Copy Token</button>
+            </div>
+            
+            <div class="verification-form">
+                <h4 class="form-title">Enter Verification Token</h4>
+                <input type="text" class="token-input" id="tokenInput" placeholder="Paste token here..." maxlength="50">
+                <br>
+                <button class="verify-token-btn" onclick="verifyToken()">Verify Email</button>
+            </div>
+            
+            <div class="result-message" id="resultMessage"></div>
+            
+            <div style="background: #f8f9fa; border-left: 4px solid #0557FF; padding: 20px; margin: 30px 0; border-radius: 0 10px 10px 0;">
+                <h3 style="color: #0557FF; margin-bottom: 10px; font-size: 1.2em; font-weight: 600;">🔒 Security Information</h3>
+                <p style="font-weight: 400;">This verification token will expire in 24 hours for your security. If you didn't create a HELIX account, please ignore this email.</p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>This email was sent by <span class="company-name">HELIX</span></p>
+            <p>If you have any questions, reply to this email or contact our support team.</p>
+        </div>
+    </div>
+
+    <script>
+        function copyToken() {
+            const tokenText = document.getElementById('tokenDisplay').textContent.trim();
+            navigator.clipboard.writeText(tokenText).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                btn.style.background = '#28a745';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '#6c757d';
+                }, 2000);
+            }).catch(() => {
+                // Fallback for older browsers
+                const input = document.getElementById('tokenInput');
+                input.value = tokenText;
+                input.select();
+                document.execCommand('copy');
+            });
+        }
+        
+        function verifyToken() {
+            const inputToken = document.getElementById('tokenInput').value.trim();
+            const originalToken = document.getElementById('tokenDisplay').textContent.trim();
+            const resultDiv = document.getElementById('resultMessage');
+            
+            if (inputToken === '') {
+                resultDiv.innerHTML = '⚠️ Please enter the verification token.';
+                resultDiv.className = 'result-message info';
+                resultDiv.style.display = 'block';
+                return;
+            }
+            
+            // Send token back to your system for verification
+            console.log('Token submitted for verification:', inputToken);
+            console.log('Original token from email:', originalToken);
+            
+            // Show processing message
+            resultDiv.innerHTML = '🔄 Verifying token... Please wait.';
+            resultDiv.className = 'result-message info';
+            resultDiv.style.display = 'block';
+            
+            // Simulate sending to your backend
+            // Replace this with your actual API call
+            setTimeout(() => {
+                if (inputToken === originalToken) {
+                    resultDiv.innerHTML = '🎉 <strong>Token verified!</strong> Your email verification is complete. Welcome to HELIX!';
+                    resultDiv.className = 'result-message success';
+                } else {
+                    resultDiv.innerHTML = '❌ Token verification failed. Please check the token and try again.';
+                    resultDiv.className = 'result-message info';
+                }
+            }, 1500);
+            
+            // Here's where you would actually send the token to your backend:
+            /*
+            fetch('your-verification-endpoint', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    token: inputToken,
+                    email: 'user@example.com' // You'd get this from your system
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    resultDiv.innerHTML = '🎉 <strong>Success!</strong> Your email has been verified. Welcome to HELIX!';
+                    resultDiv.className = 'result-message success';
+                } else {
+                    resultDiv.innerHTML = '❌ Verification failed. Please try again.';
+                    resultDiv.className = 'result-message error';
+                }
+            });
+            */
+        }
+        
+        // Allow Enter key to verify
+        document.getElementById('tokenInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                verifyToken();
+            }
+        });
+    </script>
+</body>
+</html>
