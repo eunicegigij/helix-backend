@@ -19,7 +19,6 @@ const authSchema=new Schema({
     password:{
         type:String,
         required:true,
-        minlength:[8,"Password must be atleast 8 characters long"]
     },
 
     lastLogin:{

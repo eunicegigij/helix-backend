@@ -1,10 +1,10 @@
 const mongoose=require("mongoose");
-const {dbURI}= require("../configs/index");
+const {ENV}= require("../configs/connection");
 
 const connectDB= async ()=>{
     try{
-        if (dbURI){
-            await mongoose.connect(dbURI,{
+        if (ENV.dbURI){
+            await mongoose.connect(ENV.dbURI,{
                 useNewUrlParser:true,
                 useUnifiedTopology:true
             });
@@ -18,4 +18,6 @@ const connectDB= async ()=>{
         process.exit(1);
     };
 };
+
+
 module.exports=connectDB;

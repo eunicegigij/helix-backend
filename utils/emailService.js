@@ -1,6 +1,6 @@
 const nodemailer=require("nodemailer");
-const {EMAIL_USER}=require("../configs/index");
-const {EMAIL_PASS}=require("../configs/index");
+const {EMAIL_USER}=require("../configs/connection");
+const {EMAIL_PASS}=require("../configs/connection");
 const fs=require("fs");
 const path=require("path");
 const htmlTemplate=path.join(__dirname,"..//templates/verificationEmail.html");
