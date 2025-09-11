@@ -1,4 +1,4 @@
-const Auth=require("../models/auth");
+const Auth=require("./auth");
 const utils=require("../utils/utils");
 const {sendVerification} =require("../utils/emailService");
 
@@ -23,7 +23,7 @@ async function signUp(req,res) {
          console.error("Error saving user",err.message);
          res.status(500).json({
             message:"Error Creating Account",
-            error: err.message
+            error: err.message  
          })
     };
 

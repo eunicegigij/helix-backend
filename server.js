@@ -1,19 +1,12 @@
-const dotenv=require("dotenv");
 const connectDB=require("./database/database");
 const {app}=require("./app");
+const {ENV}= require("./configs/connection");
 
-dotenv.config();
-const PORT= 3000;
+const port=ENV.PORT;
 
 connectDB()
-    .then(()=>{
-        app.listen(PORT, ()=>{
-            console.log(`Server is running on http://localhost:${PORT}`);
-        });
-    })
-    .catch((err)=>{
-        console.log(err,"Database Connection Failed");
-        process.exit(1);
-    });
+app.listen(port, ()=>{
+    console.log(`Server is running on http://localhost:${port}`);
+});
 
 

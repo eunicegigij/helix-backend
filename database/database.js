@@ -2,22 +2,26 @@ const mongoose=require("mongoose");
 const {ENV}= require("../configs/connection");
 
 const connectDB= async ()=>{
-    try{
-        if (ENV.dbURI){
-            await mongoose.connect(ENV.dbURI,{
-                useNewUrlParser:true,
-                useUnifiedTopology:true
-            });
-            console.log("Connected to database successfully");
+
+    mongoose.connect(ENV.dbURI,
+        {
+           useNewUrlParser:true,
+           useUnifiedTopology:true 
         }
-        else{
-            console.log("dbURI is missing!");
-        };
-    } catch(err){
-        console.error("Database connection failed:",err.message);
+
+    );
+    mongoose.connection.on('connected', ()=>{
+        console.log('connection successful');  
+    });
+
+    mongoose.connection.on("error" , (error)=>{
+        console.log("Database connection failed: ",error.message);
+        console.log(error);
         process.exit(1);
-    };
+    });
 };
+
+
 
 
 module.exports=connectDB;
