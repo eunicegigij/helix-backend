@@ -1,5 +1,5 @@
 const { body, validationResult } = require('express-validator');
-const Auth=require("../auth/auth");
+const Auth=require("../auth/schema/auth");
 const userValidationRules= () =>{
     return[
         body("email").isEmail().withMessage("Must be a valid email address")

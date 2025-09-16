@@ -1,33 +1,33 @@
-const Auth=require("./auth");
+const Auth=require("./schema/auth");
 const utils=require("../utils/utils");
 const {sendVerification} =require("../utils/emailService");
+const { signUpBodySchema } = require("./dto/signUp.dto");
+const {authService}=require("./authService");
 
 async function signUp(req,res) {
-    const {email,password}=req.body;
+    try{
+    const signData=signUpBodySchema.parse(req.body);
+    const {email,password,fullname}=signData;
     const hash= await utils.hashPassword(password);
-    const newUser= new Auth({
-        email:email,
+    const userAuth= authService.create({
+        email,
         password:hash
     });
-    const theToken=utils.generateToken();
-    newUser.emailVerificationToken=theToken;
     
-    try{
-        const savedUser= await newUser.save();
-        console.log("Your Account has been successfully created");
-        
-        console.log("About to call sendVerification with:", savedUser.email, theToken);
-        await sendVerification(savedUser.email,theToken);
-        console.log("sendVerification called");
+        console.log("User Auth has been created");
+
 
         res.status(201).json({
+            status:true,
             message:"Registration successful",
+            data:{}
         });
 
     }
     catch (err) {
          console.error("Error saving user",err.message);
          res.status(500).json({
+            status:false,
             message:"Error Creating Account",
             error: err.message  
          })

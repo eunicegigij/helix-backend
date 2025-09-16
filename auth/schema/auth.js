@@ -18,7 +18,8 @@ const authSchema=new Schema({
 
     lastLogin:{
         type:Date,
-        default:null // should i leave this?
+        default:null,
+        required:false
     },
     emailVerified:{
         type:Boolean,
