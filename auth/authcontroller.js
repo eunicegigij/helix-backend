@@ -1,6 +1,5 @@
 const Auth=require("./schema/auth");
 const utils=require("../utils/utils");
-const {sendVerification} =require("../utils/emailService");
 const { signUpBodySchema } = require("./dto/signUp.dto");
 const {authService}=require("./authService");
 
@@ -15,7 +14,6 @@ async function signUp(req,res) {
     });
     
         console.log("User Auth has been created");
-
 
         res.status(201).json({
             status:true,
@@ -33,7 +31,7 @@ async function signUp(req,res) {
          })
     };
 
-   
+
     
 }; 
 
