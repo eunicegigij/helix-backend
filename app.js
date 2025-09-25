@@ -1,6 +1,5 @@
 const express=require("express");
 const cors=require("cors");
-const connectDB=require("./database/database");
 const routeManager=require("./routes/routeManager");
 
 const app =express();
