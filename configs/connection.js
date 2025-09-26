@@ -1,11 +1,12 @@
-const dotenv=require("dotenv");
+const dotenv = require("dotenv");
 const { default: mongoose } = require("mongoose");
 dotenv.config();
 
-const ENV= {
-    dbURI:process.env.dbURI || "",
-    EMAIL_USER:process.env.EMAIL_USER ||"",
-    EMAIL_PASS:process.env.EMAIL_PASS ||"",
-    PORT:process.env.PORT || 3000
+const ENV = {
+  dbURI: process.env.dbURI || "",
+  EMAIL_USER: process.env.EMAIL_USER || "",
+  EMAIL_PASS: process.env.EMAIL_PASS || "",
+  PORT: process.env.PORT || 3000,
+  JWT_SECRET: process.env.JWT_SECRET,
 };
-module.exports={ENV};
+module.exports = { ENV };
