@@ -4,6 +4,7 @@ const { authService } = require("./authService");
 const { userService } = require("../user/userService");
 const jwt = require("jsonwebtoken");
 const { ENV } = require("../configs/connection");
+const { loginBodySchema } = require("./dto/login.dto");
 
 async function signUp(req, res) {
   try {
@@ -41,7 +42,8 @@ async function signUp(req, res) {
 
 async function login(req, res) {
   try {
-    const { email, password } = req.body;
+    const loginData = loginBodySchema.parse(req.body);
+    const { email, password } = loginData;
 
     // Check if email exists using your existing getAuthByFilter
     const authUsers = await authService.getAuthByFilter({ email });
@@ -71,22 +73,30 @@ async function login(req, res) {
     const userProfile = await userService.findByAuthId(authUser._id);
 
     // Create JWT token with userId and email
-    const token = jwt.sign(
+    const accessToken = jwt.sign(
       {
         userId: userProfile ? userProfile._id : null,
         email: authUser.email,
       },
       ENV.JWT_SECRET,
-      { expiresIn: "2h" }
+      { expiresIn: "2h" } // short lifetime
+    );
+
+    const refreshToken = jwt.sign(
+      {
+        userId: userProfile ? userProfile._id : null,
+        email: authUser.email,
+      },
+      ENV.JWT_REFRESH_SECRET,
+      { expiresIn: "7d" } // longer lifetime
     );
 
     res.status(200).json({
       status: true,
       message: "Login successful",
       data: {
-        token,
-        userId: userProfile ? userProfile._id : null,
-        email: authUser.email,
+        accessToken,
+        refreshToken,
       },
     });
   } catch (err) {
