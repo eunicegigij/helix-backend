@@ -46,47 +46,41 @@ async function login(req, res) {
     const { email, password } = loginData;
 
     // Check if email exists using your existing getAuthByFilter
-    const authUsers = await authService.getAuthByFilter({ email });
+    const authUser = await authService.getAuthByFilter({ email });
 
-    if (!authUsers || authUsers.length === 0) {
-      return res.status(401).json({
-        status: false,
-        message: "Invalid email or password",
-        data: {},
-      });
+    if (!authUser) {
+      throw new Error("Invalid Login Details");
     }
-
-    const authUser = authUsers[0]; // Get first match
 
     // Compare password using your existing utils.comparePassword
     const isPasswordValid = await utils.compare(password, authUser.password);
 
     if (!isPasswordValid) {
-      return res.status(401).json({
-        status: false,
-        message: "Invalid email or password",
-        data: {},
-      });
+      throw new Error("Invalid Login Details");
     }
 
     // Get user profile using authId (since User schema references Auth._id)
-    const userProfile = await userService.findByAuthId(authUser._id);
+    const userProfile = await userService.findByAuthId(authUser.id);
+
+    if (!userProfile) {
+      throw new Error("Invalid Auth Id");
+    }
 
     // Create JWT token with userId and email
+
+    const userData = {
+      userId: userProfile.id,
+      email: authUser.email,
+    };
+
     const accessToken = jwt.sign(
-      {
-        userId: userProfile ? userProfile._id : null,
-        email: authUser.email,
-      },
+      userData,
       ENV.JWT_SECRET,
       { expiresIn: "2h" } // short lifetime
     );
 
     const refreshToken = jwt.sign(
-      {
-        userId: userProfile ? userProfile._id : null,
-        email: authUser.email,
-      },
+      userData,
       ENV.JWT_REFRESH_SECRET,
       { expiresIn: "7d" } // longer lifetime
     );

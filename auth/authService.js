@@ -11,7 +11,7 @@ const authService = {
     return data;
   },
   getAuthByFilter: async function getAuth(query) {
-    const data = await auth.find({ ...query }).exec();
+    const data = await auth.findOne({ ...query }).exec();
     return data;
   },
 };
