@@ -2,32 +2,34 @@ const { userService } = require("./userService");
 
 async function whoami(req, res) {
   try {
+    if (!req.user) {
+      throw new Error("Please Login to continue");
+    }
+
     // req.user comes from AuthMiddleware (decoded JWT)
     const { userId, email } = req.user;
 
-    if (!userId) {
-      return res.status(404).json({
-        status: false,
-        message: "User profile not found. Please complete your profile.",
-        data: { email },
-      });
-    }
+    console.log(req.user);
 
     // Get full user profile
-    const userProfile = await userService.findByAuthId(userId);
+    const userProfile = await userService.findById(userId);
 
     if (!userProfile) {
-      return res.status(404).json({
-        status: false,
-        message: "User profile not found",
-        data: {},
-      });
+      throw new Error("Invalid User Id");
     }
+
+    const userData = {
+      userId: userProfile.id,
+      email,
+      fullname: userProfile.fullname,
+      skills: userProfile.skills,
+      createdAt: userProfile.createdAt,
+    };
 
     res.status(200).json({
       status: true,
       message: "User retrieved successfully",
-      data: {},
+      data: userData,
     });
   } catch (err) {
     console.error("Error retrieving user", err.message);

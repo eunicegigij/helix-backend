@@ -9,6 +9,10 @@ const userService = {
   findByAuthId: async function findByAuthId(authId) {
     return await User.findOne({ authId }).exec();
   },
+
+  findById: async function findByUserId(id) {
+    return await User.findById(id).exec();
+  },
 };
 
 module.exports = { userService };
