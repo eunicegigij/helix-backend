@@ -1,4 +1,5 @@
 const { userService } = require("./userService");
+const { updateUserBodySchema } = require("./dto/userProfileDto");
 
 async function whoami(req, res) {
   try {
@@ -41,4 +42,39 @@ async function whoami(req, res) {
   }
 }
 
-module.exports = { whoami };
+async function updateUser(req, res) {
+  try {
+    if (!req.user) {
+      throw new Error("Please Login to continue");
+    }
+
+    const { userId } = req.user;
+
+    // Validate update data
+    const updateData = updateUserBodySchema.parse(req.body);
+
+    // Check if user exists
+    const existingUser = await userService.findById(userId);
+    if (!existingUser) {
+      throw new Error("User not found");
+    }
+
+    // Update user
+    const updatedUser = await userService.update(userId, updateData);
+
+    res.status(200).json({
+      status: true,
+      message: "User updated successfully",
+      data: {},
+    });
+  } catch (err) {
+    console.error("Error updating user", err.message);
+    res.status(500).json({
+      status: false,
+      message: "Error updating user information",
+      error: err.message,
+    });
+  }
+}
+
+module.exports = { whoami, updateUser };
