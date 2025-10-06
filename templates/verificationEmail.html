@@ -343,23 +343,29 @@
 
     <script>
         function copyToken() {
-            const tokenText = document.getElementById('tokenDisplay').textContent.trim();
-            navigator.clipboard.writeText(tokenText).then(() => {
-                const btn = document.querySelector('.copy-btn');
-                const originalText = btn.textContent;
-                btn.textContent = 'Copied!';
-                btn.style.background = '#28a745';
-                setTimeout(() => {
-                    btn.textContent = originalText;
-                    btn.style.background = '#6c757d';
-                }, 2000);
-            }).catch(() => {
-                // Fallback for older browsers
+            const tokenText = document.getElementById('tokenDisplay').dataset.token();
+            function copyToken() {
+                // Get token
+                const token = '{{VERIFICATION_TOKEN}}';
+                
+                // Put in input field
                 const input = document.getElementById('tokenInput');
-                input.value = tokenText;
+                input.value = token;
                 input.select();
-                document.execCommand('copy');
-            });
+                
+                // Try modern copy
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(token);
+                } else {
+                    // Fallback copy
+                    document.execCommand('copy');
+                }
+                
+                // Button feedback
+                const btn = document.querySelector('.copy-btn');
+                btn.textContent = 'Copied!';
+                setTimeout(() => btn.textContent = 'Copy Token', 1000);
+            }
         }
         
         function verifyToken() {
