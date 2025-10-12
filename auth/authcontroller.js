@@ -1,16 +1,24 @@
-const utils = require("../utils/utils");
+const {
+  hashPassword,
+  compare,
+  generateToken,
+  getOtpExpiryTime,
+} = require("../utils/utils");
 const { signUpBodySchema } = require("./dto/signUp.dto");
 const { authService } = require("./authService");
 const { userService } = require("../user/userService");
 const jwt = require("jsonwebtoken");
 const { ENV } = require("../configs/connection");
 const { loginBodySchema } = require("./dto/login.dto");
+const { updatePasswordSchema } = require("./dto/updatePassword.dto");
+const { forgetPasswordSchema } = require("./dto/forgetPassword.dto");
+const { resetPasswordSchema } = require("./dto/resetPassword.dto");
 
 async function signUp(req, res) {
   try {
     const signData = signUpBodySchema.parse(req.body);
     const { email, password, fullname } = signData;
-    const hash = await utils.hashPassword(password);
+    const hash = await hashPassword(password);
     const userAuth = await authService.create({
       email,
       password: hash,
@@ -52,8 +60,8 @@ async function login(req, res) {
       throw new Error("Invalid Login Details");
     }
 
-    // Compare password using your existing utils.comparePassword
-    const isPasswordValid = await utils.compare(password, authUser.password);
+    // Compare password using your existing comparePassword
+    const isPasswordValid = await compare(password, authUser.password);
 
     if (!isPasswordValid) {
       throw new Error("Invalid Login Details");
@@ -103,4 +111,148 @@ async function login(req, res) {
   }
 }
 
-module.exports = { signUp, login };
+async function updatePasswordWithAuth(req, res) {
+  try {
+    if (!req.user) {
+      throw new Error("Please Login to continue");
+    }
+
+    const passwordData = updatePasswordSchema.parse(req.body);
+    const { currentPassword, newPassword } = passwordData;
+    const { email } = req.user;
+
+    // Get user auth
+    const authUser = await authService.getAuthByFilter({ email });
+
+    if (!authUser) {
+      throw new Error("User not found");
+    }
+
+    // Verify current password
+    const isPasswordValid = await compare(currentPassword, authUser.password);
+
+    if (!isPasswordValid) {
+      throw new Error("Current password is incorrect");
+    }
+
+    // Hash new password
+    const hashedPassword = await hashPassword(newPassword);
+
+    // Update password
+    await authService.updatePassword(authUser.id, hashedPassword);
+
+    res.status(200).json({
+      status: true,
+      message: "Password updated successfully",
+      data: {},
+    });
+  } catch (err) {
+    console.error("Error updating password", err.message);
+    res.status(500).json({
+      status: false,
+      message: "Error updating password",
+      error: err.message,
+    });
+  }
+}
+
+// Forget Password (Generate token and send)
+async function forgetPassword(req, res) {
+  try {
+    const emailData = forgetPasswordSchema.parse(req.body);
+    const { email } = emailData;
+
+    // Check if email exists
+    const authUsers = await authService.getAuthByFilter({ email });
+
+    if (!authUsers) {
+      throw new Error("User not found");
+    }
+
+    const authUser = await authService.getAuthByFilter({ email });
+    // Generate token
+    const token = generateToken();
+
+    // Get expiry time (10 minutes from now)
+    const expiryDate = getOtpExpiryTime(10);
+
+    // Save token and expiry in database
+    await authService.saveVerificationToken(authUser._id, token, expiryDate);
+
+    // TODO: Send email with token (implement email service)
+    // For now, return token in response
+
+    res.status(200).json({
+      status: true,
+      message: "Password reset token generated successfully",
+      data: {
+        token, // Remove this in production - send via email instead
+      },
+    });
+  } catch (err) {
+    console.error("Error in forget password", err.message);
+    res.status(500).json({
+      status: false,
+      message: "Error processing forget password request",
+      error: err.message,
+    });
+  }
+}
+
+// Reset Password (Using token)
+async function resetPassword(req, res) {
+  try {
+    const resetData = resetPasswordSchema.parse(req.body);
+    const { token, newPassword } = resetData;
+    const verificationToken = token;
+    // Find user by token
+    const authUser = await authService.getAuthByFilter({
+      verificationToken,
+    });
+
+    if (!authUser) {
+      return new Error("Invalid Token");
+    }
+
+    if (!authUser.verificationTokenExpiryDate) {
+      return new Error("Auth Token was not required");
+    }
+
+    // Check if token has expired
+    const currentTime = new Date().getTime();
+    if (currentTime > authUser.verificationTokenExpiryDate) {
+      throw new Error("Token has expired. Please request a new password reset");
+    }
+
+    // Hash new password
+    const hashedPassword = await hashPassword(newPassword);
+
+    // Update password and clear token
+    await authService.updateAuth(authUser._id, {
+      password: hashedPassword,
+      verificationToken: null,
+      verificationTokenExpiryDate: null,
+    });
+
+    res.status(200).json({
+      status: true,
+      message: "Password reset successful",
+      data: {},
+    });
+  } catch (err) {
+    console.error("Error resetting password");
+    res.status(500).json({
+      status: false,
+      message: "Error resetting password",
+      error: err.message,
+    });
+  }
+}
+
+module.exports = {
+  signUp,
+  login,
+  updatePasswordWithAuth,
+  forgetPassword,
+  resetPassword,
+};

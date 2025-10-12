@@ -6,57 +6,64 @@ const updateUserBodySchema = z.object({
     message: "role must be either mentor or mentee",
   }),
 
-  availability: z.object({
-    startTime: z.string().min(1, { message: "start time is required" }),
-    endTime: z.string().min(1, { message: "end time is required" }),
-  }),
+  availability: z
+    .object({
+      startTime: z.string().min(1, { message: "start time is required" }),
+      endTime: z.string().min(1, { message: "end time is required" }),
+    })
+    .optional(),
 
-  timezone: z.string().min(2, { message: "timezone is required" }),
+  timezone: z.string().min(2, { message: "timezone is required" }).optional(),
 
-  location: z.string().min(3, { message: "location is required" }),
+  location: z.string().min(3, { message: "location is required" }).optional(),
 
   bio: z
     .string()
     .min(10, { message: "bio must be at least 10 characters" })
-    .max(500, { message: "bio cannot be more than 500 characters" }),
+    .max(500, { message: "bio cannot be more than 500 characters" })
+    .optional(),
 
   yearsOfExperience: z
     .string()
-    .min(1, { message: "years of experience is required" }),
+    .min(1, { message: "years of experience is required" })
+    .optional(),
 
   educationalBackground: z
     .string()
-    .min(1, { message: "educational background is required" }),
+    .min(1, { message: "educational background is required" })
+    .optional(),
 
-  industry: z.string().min(1, { message: "industry is required" }),
+  industry: z.string().min(1, { message: "industry is required" }).optional(),
 
   skills: z
     .array(z.string())
-    .min(1, { message: "at least one skill is required" }),
+    .min(1, { message: "at least one skill is required" })
+    .optional(),
 
   linkedinProfile: z
     .string()
-    .url({ message: "linkedinProfile must be a valid URL" }),
+    .url({ message: "linkedinProfile must be a valid URL" })
+    .optional(),
 
   learningGoals: z
     .string()
     .min(10, { message: "learning goals must be at least 10 characters" })
-    .optional(), // Only for mentees
+    .optional(),
 
   currentJobTitle: z
     .string()
     .min(1, { message: "current job title is required" })
-    .optional(), // Only for mentors
+    .optional(),
 
   mentorshipGoals: z
     .string()
     .min(10, { message: "mentorship goals must be at least 10 characters" })
-    .optional(), // Only for mentors
+    .optional(),
 
   portfolio: z
     .string()
     .url({ message: "portfolio must be a valid URL" })
-    .optional(), // Only for mentors
+    .optional(),
 
   company: z.string().optional(),
 });

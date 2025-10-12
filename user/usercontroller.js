@@ -65,7 +65,7 @@ async function updateUser(req, res) {
     res.status(200).json({
       status: true,
       message: "User updated successfully",
-      data: {},
+      data: { updatedUser },
     });
   } catch (err) {
     console.error("Error updating user", err.message);

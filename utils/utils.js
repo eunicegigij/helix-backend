@@ -1,30 +1,33 @@
-const crypto=require("crypto");
-const bcrypt=require("bcryptjs");
+const crypto = require("crypto");
+const bcrypt = require("bcryptjs");
 
-const saltRounds=12;
+const saltRounds = 12;
 
-async function hashPassword (password){
-    try{
-       const salt=await bcrypt.genSalt(saltRounds);
-       return await bcrypt.hash(password,salt);
-    }
-    catch(err){
-        console.log("Password could not be generated",err);
-        throw(err);
-    };
-   
+async function hashPassword(password) {
+  try {
+    const salt = await bcrypt.genSalt(saltRounds);
+    return await bcrypt.hash(password, salt);
+  } catch (err) {
+    console.log("Password could not be generated", err);
+    throw err;
+  }
+}
+
+async function compare(password, hashedPassword) {
+  return await bcrypt.compare(password, hashedPassword);
+}
+
+function generateToken(lengthInBytes = 32) {
+  return crypto.randomBytes(lengthInBytes).toString("hex");
+}
+
+const getOtpExpiryTime = (minutes) => {
+  return new Date(new Date().getTime() + 1000 * 60 * Number(minutes));
 };
 
-async function compare (password,hashedPassword){
-    return await bcrypt.compare(password,hashedPassword);
-};
-
-function generateToken (lengthInBytes=32){
-    return crypto.randomBytes(lengthInBytes).toString('hex');
-};
-
-module.exports={
-    hashPassword,
-    compare,
-    generateToken
+module.exports = {
+  hashPassword,
+  compare,
+  generateToken,
+  getOtpExpiryTime,
 };
