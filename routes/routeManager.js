@@ -11,6 +11,12 @@ const { AuthMiddleware } = require("../middleware/authenticationMiddleware");
 
 const routeManager = express.Router();
 
+routeManager.get("/health", (req, res) => {
+  res.json({
+    message: "welcome to helix, server is up!",
+  });
+});
+
 routeManager.post("/auth/signup", signUp);
 routeManager.post("/auth/login", login);
 routeManager.post("/auth/forget-password", forgetPassword);
