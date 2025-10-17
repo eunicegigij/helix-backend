@@ -1,5 +1,6 @@
 const { userService } = require("./userService");
 const { updateUserBodySchema } = require("./dto/userProfileDto");
+const { ROLES } = require("../constants/constant");
 
 async function whoami(req, res) {
   try {
@@ -42,7 +43,7 @@ async function whoami(req, res) {
   }
 }
 
-async function updateUser(req, res) {
+async function updateUser(req, res, role) {
   try {
     if (!req.user) {
       throw new Error("Please Login to continue");
@@ -59,22 +60,32 @@ async function updateUser(req, res) {
       throw new Error("User not found");
     }
 
+    updateData.role = role;
+
     // Update user
     const updatedUser = await userService.update(userId, updateData);
 
     res.status(200).json({
       status: true,
-      message: "User updated successfully",
+      message: `${role} profile updated successfully`,
       data: { updatedUser },
     });
   } catch (err) {
     console.error("Error updating user", err.message);
     res.status(500).json({
       status: false,
-      message: "Error updating user information",
+      message: `Error updating ${role} profile information`,
       error: err.message,
     });
   }
 }
 
-module.exports = { whoami, updateUser };
+async function updateMentorProfile(req, res) {
+  return updateUser(req, res, ROLES.MENTOR);
+}
+
+async function updateMenteeProfile(req, res) {
+  return updateUser(req, res, ROLES.MENTEE);
+}
+
+module.exports = { whoami, updateMentorProfile, updateMenteeProfile };
