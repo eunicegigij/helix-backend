@@ -1,6 +1,7 @@
 const { userService } = require("./userService");
 const { updateUserBodySchema } = require("./dto/userProfileDto");
 const { ROLES } = require("../constants/constant");
+const { handleErrors } = require("../utils/errorHandler");
 
 async function whoami(req, res) {
   try {
@@ -35,10 +36,11 @@ async function whoami(req, res) {
     });
   } catch (err) {
     console.error("Error retrieving user", err.message);
+    const errorResponse = handleErrors(err);
     res.status(500).json({
       status: false,
-      message: "Error retrieving user information",
-      error: err.message,
+      message: errorResponse.message,
+      error: errorResponse.errors,
     });
   }
 }
@@ -71,11 +73,13 @@ async function updateUser(req, res, role) {
       data: { updatedUser },
     });
   } catch (err) {
-    console.error("Error updating user", err.message);
+    console.error(`Error updating ${role} profile`, err.message);
+    const errorResponse = handleErrors(err);
     res.status(500).json({
       status: false,
-      message: `Error updating ${role} profile information`,
-      error: err.message,
+      message:
+        errorResponse.message || `Error updating ${role} profile information`,
+      error: errorResponse.errors,
     });
   }
 }
