@@ -2,15 +2,9 @@ const { z } = require("zod");
 const { ROLES } = require("../../constants/constant");
 
 const updateUserBodySchema = z.object({
-  role: z.enum(Object.values(ROLES), {
-    message: "role must be either mentor or mentee",
-  }),
-
   availability: z
-    .object({
-      startTime: z.string().min(1, { message: "start time is required" }),
-      endTime: z.string().min(1, { message: "end time is required" }),
-    })
+    .array(z.string())
+    .min(1, { message: "at least one day is required" })
     .optional(),
 
   timezone: z.string().min(2, { message: "timezone is required" }).optional(),
