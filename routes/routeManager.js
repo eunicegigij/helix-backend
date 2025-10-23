@@ -6,11 +6,7 @@ const {
   resetPassword,
   updatePasswordWithAuth,
 } = require("../auth/authcontroller");
-const {
-  whoami,
-  updateMentorProfile,
-  updateMenteeProfile,
-} = require("../user/usercontroller");
+const { whoami, updateUser } = require("../user/usercontroller");
 const { AuthMiddleware } = require("../middleware/authenticationMiddleware");
 
 const routeManager = express.Router();
@@ -25,16 +21,6 @@ routeManager.post(
   updatePasswordWithAuth
 );
 routeManager.get("/whoami", AuthMiddleware, whoami);
-//routeManager.patch("/user/update-profile", AuthMiddleware, updateUser);
-routeManager.patch(
-  "/user/mentor/update-profile",
-  AuthMiddleware,
-  updateMentorProfile
-);
-routeManager.patch(
-  "/user/mentee/update-profile",
-  AuthMiddleware,
-  updateMenteeProfile
-);
+routeManager.patch("/user/update-profile", AuthMiddleware, updateUser);
 
 module.exports = routeManager;

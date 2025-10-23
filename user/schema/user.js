@@ -24,8 +24,14 @@ const userSchema = new Schema(
     },
 
     availability: {
-      type: [String], // Array of days: ["Monday", "Tuesday", "Wednesday"]
-      required: false,
+      startTime: {
+        type: String, // Store as "09:30 AM"
+        required: false,
+      },
+      endTime: {
+        type: String, // Store as "05:00 PM"
+        required: false,
+      },
     },
 
     timezone: {

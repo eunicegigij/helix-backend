@@ -7,7 +7,6 @@ const {
 const { signUpBodySchema } = require("./dto/signUp.dto");
 const { authService } = require("./authService");
 const { userService } = require("../user/userService");
-const { handleErrors } = require("../utils/errorHandler");
 const jwt = require("jsonwebtoken");
 const { ENV } = require("../configs/connection");
 const { loginBodySchema } = require("./dto/login.dto");
@@ -41,13 +40,10 @@ async function signUp(req, res) {
     });
   } catch (err) {
     console.error("Error saving user", err);
-
-    const errorResponse = handleErrors(err);
-
     res.status(500).json({
       status: false,
-      message: errorResponse.message,
-      error: errorResponse.errors,
+      message: "Error Creating Account",
+      error: err.message,
     });
   }
 }
@@ -106,12 +102,11 @@ async function login(req, res) {
       },
     });
   } catch (err) {
-    console.error("Error during login", err);
-    const errorResponse = handleErrors(err);
+    console.error("Error during login", err.message);
     res.status(500).json({
       status: false,
-      message: errorResponse.message,
-      error: errorResponse.errors,
+      message: "Error during login",
+      error: err.message,
     });
   }
 }
@@ -153,11 +148,10 @@ async function updatePasswordWithAuth(req, res) {
     });
   } catch (err) {
     console.error("Error updating password", err.message);
-    const errorResponse = handleErrors(err);
     res.status(500).json({
       status: false,
-      message: errorResponse.message,
-      error: errorResponse.errors,
+      message: "Error updating password",
+      error: err.message,
     });
   }
 }
@@ -197,11 +191,10 @@ async function forgetPassword(req, res) {
     });
   } catch (err) {
     console.error("Error in forget password", err.message);
-    const errorResponse = handleErrors(err);
     res.status(500).json({
       status: false,
-      message: errorResponse.message,
-      error: errorResponse.errors,
+      message: "Error processing forget password request",
+      error: err.message,
     });
   }
 }
@@ -247,12 +240,11 @@ async function resetPassword(req, res) {
       data: {},
     });
   } catch (err) {
-    console.error("Error resetting password", err.message);
-    const errorResponse = handleErrors(err);
+    console.error("Error resetting password");
     res.status(500).json({
       status: false,
-      message: errorResponse.message,
-      error: errorResponse.errors,
+      message: "Error resetting password",
+      error: err.message,
     });
   }
 }
