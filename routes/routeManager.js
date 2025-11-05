@@ -5,12 +5,12 @@ const {
   forgetPassword,
   resetPassword,
   updatePasswordWithAuth,
-} = require("../auth/authcontroller");
+} = require("../api/auth/authcontroller");
 const {
   whoami,
   updateMentorProfile,
   updateMenteeProfile,
-} = require("../user/usercontroller");
+} = require("../api/user/usercontroller");
 const { AuthMiddleware } = require("../middleware/authenticationMiddleware");
 
 const routeManager = express.Router();

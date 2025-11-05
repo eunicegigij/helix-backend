@@ -3,13 +3,13 @@ const {
   compare,
   generateToken,
   getOtpExpiryTime,
-} = require("../utils/utils");
+} = require("../../utils/utils");
 const { signUpBodySchema } = require("./dto/signUp.dto");
 const { authService } = require("./authService");
 const { userService } = require("../user/userService");
-const { handleErrors } = require("../utils/errorHandler");
+const { handleErrors } = require("../../utils/errorHandler");
 const jwt = require("jsonwebtoken");
-const { ENV } = require("../configs/connection");
+const { ENV } = require("../../configs/connection");
 const { loginBodySchema } = require("./dto/login.dto");
 const { updatePasswordSchema } = require("./dto/updatePassword.dto");
 const { forgetPasswordSchema } = require("./dto/forgetPassword.dto");

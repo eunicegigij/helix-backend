@@ -1,7 +1,7 @@
 const { userService } = require("./userService");
 const { updateUserBodySchema } = require("./dto/userProfileDto");
-const { ROLES } = require("../constants/constant");
-const { handleErrors } = require("../utils/errorHandler");
+const { ROLES } = require("../../constants/constant");
+const { handleErrors } = require("../../utils/errorHandler");
 
 async function whoami(req, res) {
   try {

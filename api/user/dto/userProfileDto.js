@@ -1,5 +1,5 @@
 const { z } = require("zod");
-const { ROLES } = require("../../constants/constant");
+const { ROLES } = require("../../../constants/constant");
 
 const updateUserBodySchema = z.object({
   availability: z

@@ -1,7 +1,7 @@
 function handleErrors(err) {
   let errors = {};
 
-  // Check if error message is a stringified JSON (from Zod)
+  // Check if error message is a stringified JSON (from Zod) 
   if (typeof err.message === "string" && err.message.startsWith("[")) {
     try {
       const parsedErrors = JSON.parse(err.message);
